@@ -16,27 +16,18 @@ class PersistCometFiles
 {
   protected $cometDir;
 
-  protected $files = [
-    'MSC_2016_06.xml',
-    'MSC_2016_09.xml',
-    'MSC_2016_12.xml',
-    'MSC_2017_03.xml',
-    'MSC_2017_06.xml',
-    'MSC_2017_09.xml',
-    'MSC_2017_12.xml',
-    'MSC_2018_03.xml',
-    'MSC_2018_06.xml',
-    'MSC_2018_09.xml',
-    'MSC_2018_12.xml',
-    'MSC_2019_03.xml',
-    'MSC_2019_06.xml'
+  protected $files;
+
+  protected $nonMatchedCourses = [
+    'completions' => [],
+    'views' => []
   ];
 
-  protected $nonMatchedCourses = [];
-
-  public function __construct()
+  public function __construct($files)
   {
     $this->cometDir = storage_path() . '/app/comet/';
+
+    $this->files = $files;
 
     $this->cometCompletions = CometCompletion::all();
 
@@ -90,11 +81,25 @@ class PersistCometFiles
 
       $views = $this->cleanData($cleanFileContent, 1);
 
-      $this->persistCompletions($completions);
+      $unmatchedCompletions = $this->persistCompletions($completions);
 
-      if ((CometCompletion::all())->count() === $this->cometCompletions->count()) continue;
+      if ((CometCompletion::all())->count() === $this->cometCompletions->count()) {
+        continue;
+      } else {
+        foreach ($unmatchedCompletions as $completion) {
+          $this->nonMatchedCourses['completions'][] = $completion;
+        }
+      }
 
-      $this->persistViews($views);
+      $unmatchedViews = $this->persistViews($views);
+
+      if ((CometView::all())->count() === $this->cometViews->count()) {
+        continue;
+      } else {
+        foreach ($unmatchedViews as $view) {
+          $this->nonMatchedCourses['views'][] = $view;
+        }
+      }
     }
   }
 
@@ -171,10 +176,14 @@ class PersistCometFiles
    */
   protected function persistCompletions($data)
   {
-    foreach($data as $item) {
-      $item[10] = $this->validateModuleName($item, 'completions');
+    $nonMatchArray = [];
 
-      if ($item[10] === null) continue;
+    foreach($data as $item) {
+      if ($this->validateModuleName($item, 'completions') === null) {
+        $nonMatchArray[] = $item;
+
+        continue;
+      }
 
       $exists = $this->cometCompletions
         ->where('email', $item[0])
@@ -204,7 +213,7 @@ class PersistCometFiles
       ]);
     }
 
-    return;
+    return $nonMatchArray;
   }
 
   /**
@@ -216,10 +225,14 @@ class PersistCometFiles
    */
   protected function persistViews($data)
   {
-    foreach($data as $item) {
-      $item[10] = $this->validateModuleName($item, 'views');
+    $nonMatchArray = [];
 
-      if ($item[10] === null) continue;
+    foreach($data as $item) {
+      if ($this->validateModuleName($item, 'views') === null) {
+        $nonMatchArray[] = $item;
+
+        continue;
+      }
 
       CometView::create([
         'email' => $item[0],
@@ -241,7 +254,7 @@ class PersistCometFiles
       ]);
     }
 
-    return;
+    return $nonMatchArray;
   }
 
   /**
@@ -257,7 +270,11 @@ class PersistCometFiles
    */
   protected function validateModuleName($item, $type) {
     foreach($this->cometCourses as $course) {
-      $sim = similar_text(iconv('UTF-8','ASCII//TRANSLIT//IGNORE', $course->title), iconv('UTF-8','ASCII//TRANSLIT//IGNORE', $item[10]), $percent);
+      $sim = similar_text(
+        iconv('UTF-8','ASCII//TRANSLIT//IGNORE', $course->title), 
+        iconv('UTF-8','ASCII//TRANSLIT//IGNORE', $item[10]), 
+        $percent
+      );
 
       if ($percent == 100) {
         return $course->title;
@@ -267,8 +284,6 @@ class PersistCometFiles
         return $course->title;
       }
     }
-
-    $this->nonMatchedCourses[$type][] = $item;
 
     return null;
   }

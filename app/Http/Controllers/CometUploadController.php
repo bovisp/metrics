@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 class CometUploadController extends Controller
 {
     public function store() {
-      return (new PersistCometFiles())->persist();
+      return (new PersistCometFiles(request('files')))->persist();
     }
 
     public function show() {
@@ -16,7 +16,6 @@ class CometUploadController extends Controller
     }
 
     public function meta() {
-      // return response(500, 'Baaadd');
       return uniqid(true);
     }
 

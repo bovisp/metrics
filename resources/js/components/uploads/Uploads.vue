@@ -38,7 +38,6 @@ export default {
   data () {
     return {
       overallProgress: 0,
-      interval: null,
       secondsRemaining: 0,
       timeRemaining: 'Calculating'
     }
@@ -98,16 +97,20 @@ export default {
     })
 
     window.events.$on('upload:init', () => {
-       this.interval = setInterval(() => {
-         if (this.unfinishedFiles().length === 0) {
-           this.updateOverallProgress()
+      var interval = null
 
-           clearInterval(this.interval)
+      interval = setInterval(() => {
+        if (this.unfinishedFiles().length === 0) {
+          this.updateOverallProgress()
 
-           this.interval = null
-         }
+           
 
-         this.updateTimeRemaining()
+          clearInterval(interval)
+
+          interval = null
+        }
+
+        this.updateTimeRemaining()
        }, 1000)
     })
   }
