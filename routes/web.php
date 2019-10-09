@@ -15,3 +15,5 @@ Route::post('/comet/uploads/meta', 'CometUploadController@meta');
 Route::post('/comet/uploads', 'CometUploadController@upload');
 
 Route::post('/comet/uploads/store', 'CometUploadController@store');
+
+Route::post('/comet/corrections', 'CometUploadController@storeCorrections');

@@ -22,6 +22,8 @@
     },
     "dependencies": {
         "bootstrap-vue": "^2.0.2",
-        "lodash-es": "^4.17.15"
+        "lodash-es": "^4.17.15",
+        "portal-vue": "^2.1.6",
+        "vue-multiselect": "^2.1.6"
     }
 }

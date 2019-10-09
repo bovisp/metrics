@@ -179,6 +179,8 @@ class PersistCometFiles
     $nonMatchArray = [];
 
     foreach($data as $item) {
+      if ($item[11] === 'Spanish') continue;
+
       if ($this->validateModuleName($item, 'completions') === null) {
         $nonMatchArray[] = $item;
 
@@ -228,6 +230,8 @@ class PersistCometFiles
     $nonMatchArray = [];
 
     foreach($data as $item) {
+      if ($item[11] === 'Spanish') continue;
+      
       if ($this->validateModuleName($item, 'views') === null) {
         $nonMatchArray[] = $item;
 
