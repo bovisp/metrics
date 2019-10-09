@@ -1,40 +1,34 @@
 <template>
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-md-8">
-        <div 
-          class="dragndrop"
-          :class="{ 'dragndrop--dragged': isDraggedOver }"
-          @dragover.prevent="enter"
-          @dragenter.prevent="enter"
-          @dragleave.prevent="leave"
-          @dragend.prevent="leave"
-          @drop.prevent="drop"
-        >
-          <input 
-            type="file" 
-            name="files[]" 
-            id="file" 
-            multiple 
-            class="dragndrop__input"
-            @change="select"
-            ref="input"
-          >
+  <div 
+    class="dragndrop"
+    :class="{ 'dragndrop--dragged': isDraggedOver }"
+    @dragover.prevent="enter"
+    @dragenter.prevent="enter"
+    @dragleave.prevent="leave"
+    @dragend.prevent="leave"
+    @drop.prevent="drop"
+  >
+    <input 
+      type="file" 
+      name="files[]" 
+      id="file" 
+      multiple 
+      class="dragndrop__input"
+      @change="select"
+      ref="input"
+    >
 
-          <label 
-            for="file" 
-            class="dragndrop__header"
-            :class="{ 'dragndrop__header--compact': files.length >= 1 }"
-          >
-            <strong>Drag files here</strong> or click to select files.
-          </label>
+    <label 
+      for="file" 
+      class="dragndrop__header"
+      :class="{ 'dragndrop__header--compact': files.length >= 1 }"
+    >
+      <strong>Drag files here</strong> or click to select files.
+    </label>
 
-          <Uploads 
-            :files="files"
-          />
-        </div>
-      </div>
-    </div>
+    <Uploads 
+      :files="files"
+    />
   </div>
 </template>
 

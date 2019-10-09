@@ -2,6 +2,6 @@
 
 @section('content')
 
-  <upload-form />
+  <comet-files />  
 
 @endsection

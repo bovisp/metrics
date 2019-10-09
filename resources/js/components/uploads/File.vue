@@ -61,8 +61,6 @@ export default {
       fileObject.totalBytes = e.total
 
       fileObject.progress = Math.ceil((e.loaded / e.total) * 100)
-
-      console.log(fileObject.progress)
     },
 
     cancel () {
