@@ -2112,6 +2112,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                             return Object(lodash_es__WEBPACK_IMPORTED_MODULE_3__["forEach"])(_this2.unmatchedCourses[type], function (unmatchedCourse, index) {
                               if (course === _this2.unmatchedCourses[type][index][10]) {
                                 _this2.unmatchedCourses[type][index][10] = corrected;
+
+                                _this2.unmatchedCourses[type][index].push(course);
                               }
                             });
 

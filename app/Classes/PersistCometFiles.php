@@ -8,9 +8,11 @@ use App\CometView;
 use App\CometCourse;
 use App\CometCompletion;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Mtownsend\XmlToArray\XmlToArray;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 
 class PersistCometFiles
 {
@@ -25,7 +27,7 @@ class PersistCometFiles
 
   public function __construct($files)
   {
-    $this->cometDir = storage_path() . '/app/comet/';
+    $this->cometDir = storage_path() . '/app/public/comet/';
 
     $this->files = $files;
 
@@ -100,6 +102,8 @@ class PersistCometFiles
           $this->nonMatchedCourses['views'][] = $view;
         }
       }
+
+      File::delete($this->cometDir . $file);
     }
   }
 
@@ -181,6 +185,12 @@ class PersistCometFiles
     foreach($data as $item) {
       if ($item[11] === 'Spanish') continue;
 
+      if ($this->hasCorrectedTitle($item[10])) {
+        $item[10] = CometCourse::find($this->hasCorrectedTitle($item[10]))->title;
+
+        continue;
+      } 
+
       if ($this->validateModuleName($item, 'completions') === null) {
         $nonMatchArray[] = $item;
 
@@ -230,9 +240,17 @@ class PersistCometFiles
     $nonMatchArray = [];
 
     foreach($data as $item) {
-      if ($item[11] === 'Spanish') continue;
+      if ($item[11] === 'Spanish') {
+        continue;
+      }
       
-      if ($this->validateModuleName($item, 'views') === null) {
+      if ($this->hasCorrectedTitle($item[10])) {
+        $item[10] = CometCourse::find($this->hasCorrectedTitle($item[10]))->title;
+
+        continue;
+      } 
+      
+      if (is_null($this->validateModuleName($item, 'views'))) {
         $nonMatchArray[] = $item;
 
         continue;
@@ -290,5 +308,20 @@ class PersistCometFiles
     }
 
     return null;
+  }
+
+    /**
+     * Check to see if the incorrect title exists in the 'corrected_comet_titles'
+     * table. 
+     *
+     * @param int $title
+     * @return int
+     */
+  protected function hasCorrectedTitle($title) {
+    return optional(
+      DB::table('corrected_comet_titles')
+        ->where('incorrect_title', $title)
+        ->first()
+      )->comet_course_id;
   }
 }

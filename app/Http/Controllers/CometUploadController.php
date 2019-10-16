@@ -6,6 +6,7 @@ use App\CometView;
 use App\CometCourse;
 use App\CometCompletion;
 use App\Classes\PersistCometFiles;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class CometUploadController extends Controller
@@ -35,6 +36,19 @@ class CometUploadController extends Controller
           'score' => $completion[12],
           'date_completed' => date('Y-m-d', strtotime($completion[13]))
         ]);
+
+        $correctionExists = DB::table('corrected_comet_titles')
+          ->where('incorrect_title', $completion[count($completion) - 1])
+          ->first();
+
+        $course = CometCourse::where('title', $completion[10])->firstOrFail();
+
+        if ($correctionExists === null) {
+          DB::table('corrected_comet_titles')->insert([
+            'comet_course_id' => $course->id,
+            'incorrect_title' => $completion[count($completion) - 1]
+          ]);
+        }
       }
 
       foreach(request('views') as $view) {
@@ -56,6 +70,19 @@ class CometUploadController extends Controller
           'session_pages' => $view[14],
           'date' => date('Y-m-d', strtotime($view[15]))
         ]);
+
+        $correctionExists = DB::table('corrected_comet_titles')
+          ->where('incorrect_title', $view[count($view) - 1])
+          ->first();
+
+        $course = CometCourse::where('title', $view[10])->firstOrFail();
+
+        if ($correctionExists === null) {
+          DB::table('corrected_comet_titles')->insert([
+            'comet_course_id' => $course->id,
+            'incorrect_title' => $view[count($view) - 1]
+          ]);
+        }
       }
 
       return response([
@@ -82,7 +109,7 @@ class CometUploadController extends Controller
         explode('.', request()->file('file')->getClientOriginalName())[1]
       );
 
-      Storage::putFileAs('/comet', $upload, request('id') . '.' . $extension);
+      Storage::putFileAs('/public/comet', $upload, request('id') . '.' . $extension);
 
       return [
         'codedFilename' => request('id') . '.' . $upload->getClientOriginalExtension(),
