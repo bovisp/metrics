@@ -11,14 +11,16 @@ use Illuminate\Support\Facades\Storage;
 
 class CometUploadController extends Controller
 {
-    public function store() {
+    public function store() 
+    {
       return [
         'nonMatchedCourses' => (new PersistCometFiles(request('files')))->persist(),
         'courseTitles' => CometCourse::select('title')->get()
       ];
     }
 
-    public function storeCorrections(){
+    public function storeCorrections()
+    {
       foreach(request('completions') as $completion) {
         CometCompletion::create([
           'email' => $completion[0],
@@ -51,7 +53,8 @@ class CometUploadController extends Controller
         }
       }
 
-      foreach(request('views') as $view) {
+      foreach(request('views') as $view) 
+      {
         CometView::create([
           'email' => $view[0],
           'last' => $view[1],
@@ -90,15 +93,18 @@ class CometUploadController extends Controller
       ], 200);
     }
 
-    public function show() {
+    public function show() 
+    {
       return view('comet.uploads');
     }
 
-    public function meta() {
+    public function meta() 
+    {
       return uniqid(true);
     }
 
-    public function upload() {
+    public function upload() 
+    {
       request()->validate([
         'file' => 'required|file|mimes:xml'
       ]);

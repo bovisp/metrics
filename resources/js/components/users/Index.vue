@@ -1,0 +1,72 @@
+<template>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="d-flex mb-3">
+          <button 
+            class="btn btn-primary ml-auto"
+            @click="creating = true"
+            v-if="!creating && !editing"
+          >
+            Add user
+          </button>
+
+          <button 
+            class="btn btn-text ml-auto"
+            @click="cancel"
+            v-if="creating || editing"
+          >
+            Cancel
+          </button>
+        </div>
+
+        <users-table 
+          :users="users" 
+          v-if="!editing && !creating"
+        />
+
+        <users-create 
+          v-if="creating"
+        />
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import UsersTable from './UsersTable'
+import UsersCreate from './UsersCreate'
+
+export default {
+  components: {
+    UsersTable,
+    UsersCreate
+  },
+
+  data () {
+    return {
+      users: [],
+      editing: false,
+      creating: false
+    }
+  },
+
+  methods: {
+    async fetch () {
+      let { data } = await axios.get('/api/users')
+
+      this.users = data
+    },
+
+    cancel () {
+      this.creating = false
+
+      this.editing = false
+    }
+  },
+
+  mounted () {
+    this.fetch()
+  }
+}
+</script>
