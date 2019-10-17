@@ -14,3 +14,5 @@ use Illuminate\Http\Request;
 */
 
 Route::get('/users', 'Api\UsersController@index');
+
+Route::post('/users', 'Api\UsersController@invite');

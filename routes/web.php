@@ -19,3 +19,5 @@ Route::post('/comet/uploads/store', 'CometUploadController@store');
 Route::post('/comet/corrections', 'CometUploadController@storeCorrections');
 
 Route::get('/users', 'UsersController@index');
+
+Route::get('/users/register', 'UsersController@register');

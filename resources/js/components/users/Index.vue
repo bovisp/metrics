@@ -67,6 +67,16 @@ export default {
 
   mounted () {
     this.fetch()
+
+    window.events.$on('user:invited', () => {
+      this.creating = false
+
+      this.$bvToast.toast(`User invited.`, {
+        autoHideDelay: 5000,
+        variant: 'success',
+        toaster: 'b-toaster-top-center'
+      })
+    })
   }
 }
 </script>

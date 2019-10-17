@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
 use App\User;
-use Illuminate\Foundation\Auth\RegistersUsers;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Auth\RegistersUsers;
 
 class RegisterController extends Controller
 {
@@ -40,6 +44,22 @@ class RegisterController extends Controller
         $this->middleware('guest');
     }
 
+    public function showRegistrationForm() {
+      abort(404);
+    }
+
+    public function register(Request $request)
+    {
+      $this->validator($request->all())->validate();
+
+      event(new Registered($user = $this->create($request->all())));
+
+      $this->guard()->login($user);
+
+      return $this->registered($request, $user)
+                      ?: redirect($this->redirectPath());
+    }
+
     /**
      * Get a validator for an incoming registration request.
      *
@@ -52,6 +72,25 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'token' => [
+              function ($attribute, $value, $fail) {
+                $token = DB::table('invite_tokens')
+                  ->where('token', $value)
+                  ->get()
+                  ->first();
+        
+                if (!$token) {
+                  $fail($attribute.' has expired.');
+                }
+
+                $tokenDate = new Carbon($token->created_at);
+                $currentDate = Carbon::now();
+
+                if ($currentDate->diffInHours($tokenDate) > 24) {
+                  $fail($attribute.' has expired.');
+                }
+              }
+            ]
         ]);
     }
 
@@ -63,10 +102,14 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
+      DB::table('invite_tokens')
+          ->where('token', $data['token'])
+          ->delete();
+
+      return User::create([
+        'name' => $data['name'],
+        'email' => $data['email'],
+        'password' => Hash::make($data['password']),
+      ]);
     }
 }
