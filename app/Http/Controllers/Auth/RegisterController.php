@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -41,7 +40,7 @@ class RegisterController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest');
+        $this->middleware(['guest', 'invitetoken']);
     }
 
     public function showRegistrationForm() {
@@ -71,26 +70,7 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'token' => [
-              function ($attribute, $value, $fail) {
-                $token = DB::table('invite_tokens')
-                  ->where('token', $value)
-                  ->get()
-                  ->first();
-        
-                if (!$token) {
-                  $fail($attribute.' has expired.');
-                }
-
-                $tokenDate = new Carbon($token->created_at);
-                $currentDate = Carbon::now();
-
-                if ($currentDate->diffInHours($tokenDate) > 24) {
-                  $fail($attribute.' has expired.');
-                }
-              }
-            ]
+            'password' => ['required', 'string', 'min:8', 'confirmed']
         ]);
     }
 

@@ -8,16 +8,31 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('/comet/uploads', 'CometUploadController@show');
+Route::prefix('comet')->middleware('auth')->group(function() {
 
-Route::post('/comet/uploads/meta', 'CometUploadController@meta');
+  Route::get('/uploads', 'CometUploadController@show');
 
-Route::post('/comet/uploads', 'CometUploadController@upload');
+  Route::post('/uploads/meta', 'CometUploadController@meta');
 
-Route::post('/comet/uploads/store', 'CometUploadController@store');
+  Route::post('/uploads', 'CometUploadController@upload');
 
-Route::post('/comet/corrections', 'CometUploadController@storeCorrections');
+  Route::post('/uploads/store', 'CometUploadController@store');
 
-Route::get('/users', 'UsersController@index');
+  Route::post('/corrections', 'CometUploadController@storeCorrections');
+});
 
-Route::get('/users/register', 'UsersController@register');
+Route::prefix('/api/users')->middleware('auth')->group(function() {
+  Route::get('/', 'Api\UsersController@index');
+
+  Route::post('/', 'Api\UsersController@invite');
+
+  Route::put('/{user}/profile', 'Api\UsersController@updateProfile');
+
+  Route::put('/{user}/password', 'Api\UsersController@updatePassword');
+});
+
+Route::get('/users', 'UsersController@index')
+  ->middleware('auth');
+
+Route::get('/users/register', 'UsersController@register')
+  ->middleware('invitetoken');

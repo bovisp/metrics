@@ -16,7 +16,7 @@
             @click="cancel"
             v-if="creating || editing"
           >
-            Cancel
+            {{ creating ? 'Cancel' : 'Back to users page' }}
           </button>
         </div>
 
@@ -28,6 +28,11 @@
         <users-create 
           v-if="creating"
         />
+
+        <users-edit
+          v-if="editing"
+          :user="user"
+        />
       </div>
     </div>
   </div>
@@ -36,16 +41,19 @@
 <script>
 import UsersTable from './UsersTable'
 import UsersCreate from './UsersCreate'
+import UsersEdit from './UsersEdit'
 
 export default {
   components: {
     UsersTable,
-    UsersCreate
+    UsersCreate,
+    UsersEdit
   },
 
   data () {
     return {
       users: [],
+      user: {},
       editing: false,
       creating: false
     }
@@ -76,6 +84,12 @@ export default {
         variant: 'success',
         toaster: 'b-toaster-top-center'
       })
+    })
+
+    window.events.$on('user:edit', user => {
+      this.editing = true
+
+      this.user = user
     })
   }
 }

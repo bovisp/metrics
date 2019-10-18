@@ -5,7 +5,12 @@
       :fields="fields"
     >
       <template v-slot:cell(actions)="row">
-        {{ row.item.id }}
+        <button 
+          class="btn btn-primary btn-sm"
+          @click="edit(row.item)"
+        >
+          Edit
+        </button>
       </template>
     </b-table>
   </div>
@@ -27,6 +32,12 @@ export default {
         { key: 'email', label: 'Email' },
         { key: 'actions', label: 'Actions' },
       ]
+    }
+  },
+
+  methods: {
+    edit (user) {
+      window.events.$emit('user:edit', user)
     }
   }
 }
