@@ -3,7 +3,17 @@
     <div class="form-group">
       <label for="email">Enter email address of new user to invite</label>
 
-      <input type="email" class="form-control" v-model="email" id="email">
+      <input 
+        type="email" 
+        class="form-control"
+        :class="{ 'is-invalid': errors.email }" 
+        v-model="email" 
+        id="email"
+      >
+
+      <div v-if="errors.email" class="text-danger">
+        {{ errors.email[0] }}
+      </div>
     </div>
 
     <button class="btn btn-primary">Invite user</button>

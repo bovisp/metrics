@@ -12,8 +12,13 @@
           type="text" 
           id="name" 
           class="form-control"
+          :class="{ 'is-invalid': errors.name }"
           v-model="name"
         >
+
+        <div v-if="errors.name" class="text-danger">
+          {{ errors.name[0] }}
+        </div>
       </div>
 
       <div class="form-group">
@@ -23,8 +28,13 @@
           type="email" 
           id="email" 
           class="form-control"
+          :class="{ 'is-invalid': errors.email }"
           v-model="email"
         >
+
+        <div v-if="errors.email" class="text-danger">
+          {{ errors.email[0] }}
+        </div>
       </div>
 
       <button class="btn btn-primary">
@@ -44,8 +54,13 @@
           type="password" 
           id="password" 
           class="form-control"
+          :class="{ 'is-invalid': errors.password }"
           v-model="password"
         >
+
+        <div v-if="errors.password" class="text-danger">
+          {{ errors.password[0] }}
+        </div>
       </div>
 
       <div class="form-group">
@@ -55,8 +70,13 @@
           type="password" 
           id="password-confirm" 
           class="form-control"
+          :class="{ 'is-invalid': errors.password_confirmation }"
           v-model="passwordConfirm"
         >
+
+        <div v-if="errors.password_confirmation" class="text-danger">
+          {{ errors.password_confirmation[0] }}
+        </div>
       </div>
 
       <button class="btn btn-primary">

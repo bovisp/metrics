@@ -29,6 +29,8 @@ Route::prefix('/api/users')->middleware('auth')->group(function() {
   Route::put('/{user}/profile', 'Api\UsersController@updateProfile');
 
   Route::put('/{user}/password', 'Api\UsersController@updatePassword');
+
+  Route::delete('/{user}', 'Api\UsersController@destroy');
 });
 
 Route::get('/users', 'UsersController@index')

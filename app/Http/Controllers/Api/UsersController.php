@@ -20,6 +20,10 @@ class UsersController extends Controller
 
     public function invite()
     {
+      request()->validate([
+        'email' => 'required|email|unique:users,email'
+      ]);
+
       DB::table('invite_tokens')->insert([
         'token' => $token = Str::random(40),
         'created_at' => Carbon::now()
@@ -45,13 +49,19 @@ class UsersController extends Controller
     public function updatePassword(User $user)
     {
       request()->validate([
-        'password' => 'required',
         'password' => 'required|confirmed'
       ]);
 
       $user->update([
         'password' => Hash::make(request('password'))
       ]);
+
+      return $user;
+    }
+
+    public function destroy(User $user)
+    {
+      $user->delete();
 
       return $user;
     }
