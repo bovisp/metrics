@@ -136,6 +136,7 @@ export default {
         await forEach(this.unmatchedCourses[type], (unmatchedCourse, index) => {
           if (course === this.unmatchedCourses[type][index][10]) {
             this.unmatchedCourses[type][index][10] = corrected
+            this.unmatchedCourses[type][index].push(course)
           }
         })
       })

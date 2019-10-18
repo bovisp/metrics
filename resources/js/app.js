@@ -5,6 +5,8 @@
  */
 
 require('./bootstrap')
+import store from './store'
+import error from './mixins/errors'
 
 window.Vue = require('vue')
 
@@ -12,6 +14,8 @@ import BootstrapVue from 'bootstrap-vue'
 Vue.use(BootstrapVue)
 
 window.events = new Vue()
+
+import './helpers/interceptors'
 
 /**
  * The following block of code may be used to automatically register your
@@ -25,6 +29,9 @@ window.events = new Vue()
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
 Vue.component('comet-files', require('./components/comet/CometFiles.vue').default);
+Vue.component('users-index', require('./components/users/Index.vue').default);
+
+Vue.mixin(error);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -34,4 +41,5 @@ Vue.component('comet-files', require('./components/comet/CometFiles.vue').defaul
 
 const app = new Vue({
     el: '#app', 
+    store
 })
