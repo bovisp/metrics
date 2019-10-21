@@ -1,5 +1,8 @@
 <?php
 
+use Goutte\Client;
+use Symfony\Component\DomCrawler\Crawler;
+
 Route::get('/', function() {
   return view('welcome');
 });
@@ -38,3 +41,5 @@ Route::get('/users', 'UsersController@index')
 
 Route::get('/users/register', 'UsersController@register')
   ->middleware('invitetoken');
+
+Route::get('/scrape', 'CometScrapeController@scrape');
