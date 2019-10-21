@@ -16,8 +16,18 @@ use Illuminate\Support\Facades\Storage;
 
 class PersistCometFiles
 {
+  /**
+   * Default directory where the uploaded COMET files are stored
+   *
+   * @var string
+   */
   protected $cometDir;
 
+  /**
+   * An array of COMET files
+   *
+   * @var array
+   */
   protected $files;
 
   protected $nonMatchedCourses = [
@@ -85,6 +95,9 @@ class PersistCometFiles
 
       $unmatchedCompletions = $this->persistCompletions($completions);
 
+      // If no new COMET completion data is persisted, this is a duplicate file.
+      // If data is persisted and there are module names that have been 
+      // incorrectly encoded, add them to the non-matched courses array.
       if ((CometCompletion::all())->count() === $this->cometCompletions->count()) {
         continue;
       } else {
@@ -95,6 +108,9 @@ class PersistCometFiles
 
       $unmatchedViews = $this->persistViews($views);
 
+      // If no new COMET view data is persisted, this is a duplicate file.
+      // If data is persisted and there are module names that have been 
+      // incorrectly encoded, add them to the non-matched courses array.
       if ((CometView::all())->count() === $this->cometViews->count()) {
         continue;
       } else {
