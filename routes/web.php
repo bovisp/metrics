@@ -1,8 +1,5 @@
 <?php
 
-use Goutte\Client;
-use Symfony\Component\DomCrawler\Crawler;
-
 Route::get('/', function() {
   return view('welcome');
 });
@@ -22,6 +19,15 @@ Route::prefix('comet')->middleware('auth')->group(function() {
   Route::post('/uploads/store', 'CometUploadController@store');
 
   Route::post('/corrections', 'CometUploadController@storeCorrections');
+
+  Route::get('/scrape', 'CometScrapeController@index');
+});
+
+Route::prefix('api/comet')->middleware('auth')->group(function() {
+
+  Route::get('/scrape', 'Api\CometScrapeController@scrape');
+
+  Route::get('/scrape/{page}', 'Api\CometScrapeController@scrapeModuleListingPage');  
 });
 
 Route::prefix('/api/users')->middleware('auth')->group(function() {
@@ -41,5 +47,3 @@ Route::get('/users', 'UsersController@index')
 
 Route::get('/users/register', 'UsersController@register')
   ->middleware('invitetoken');
-
-Route::get('/scrape', 'CometScrapeController@scrape');

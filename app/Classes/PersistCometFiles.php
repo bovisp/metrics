@@ -2,7 +2,7 @@
 
 namespace App\Classes;
 
-ini_set('max_execution_time', '600');
+ini_set('max_execution_time', '90');
 
 use App\CometView;
 use App\CometCourse;
