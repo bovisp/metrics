@@ -75,12 +75,12 @@ class CometScrape
 
     $moduleCrawler = $this->scrapeModulePage($moduleId);
 
-    $newModule = $this->storeModule($moduleCrawler, $moduleId);
+    $newModule = $this->storeModule($moduleCrawler, $moduleId, 'English', null);
 
     $this->getOtherModuleLanguages($moduleCrawler, $newModule->id);
   }
 
-  protected function storeModule($crawler, $moduleId, $language = 'English')
+  protected function storeModule($crawler, $moduleId, $language, $englishModuleId)
   {
     $title = $crawler->filter('#content h3 a')->first()->text();
 
@@ -108,7 +108,8 @@ class CometScrape
       'objectives' => trim($objectives),
       'keywords' => serialize($keywords),
       'language_id' => $languageId,
-      'image_src' => "{$this->baseUrl}/{$imageSrc}"
+      'image_src' => "{$this->baseUrl}/{$imageSrc}",
+      'english_module_id' => $englishModuleId
     ]);
 
     return $module;
@@ -198,12 +199,7 @@ class CometScrape
 
       $moduleCrawler = $this->scrapeModulePage($moduleId);
 
-      $newModule = $this->storeModule($moduleCrawler, $moduleId, trim($node->html()));
-
-      DB::table('comet_course_languages')->insert([
-        'english_comet_course_id' => $englishModuleId,
-        'comet_course_id' => $newModule->id
-      ]);
+      $newModule = $this->storeModule($moduleCrawler, $moduleId, trim($node->html()), $englishModuleId);
     }
   }
 

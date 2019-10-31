@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\CometCourse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
@@ -27,5 +28,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
       Cache::forever('cometLanguages', DB::table('comet_languages')->get());
+
+      Cache::forever('cometModules', CometCourse::with('nonEnglishCourses')->whereNull('english_module_id')->get());
     }
 }
