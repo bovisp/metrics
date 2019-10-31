@@ -85,6 +85,10 @@ class CometReport
       $results[$i]['total_module_' . $type] = $this->getTotalModuleStats($results[$i], $type);
     }
 
+    usort($results, function($a, $b) use ($type) {
+      return $b['total_module_' . $type] <=> $a['total_module_' . $type];
+    });
+
     return $results;
   }
 
