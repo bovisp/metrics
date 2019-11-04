@@ -70,13 +70,13 @@ class CometReport
     for ($i = 0; $i < count($dataKeys); $i++) {
       if (!$this->cometCourses->where('title', $dataKeys[$i])->where('language_id', $this->englishLangId)->first()) continue;
 
-      $results[$i]['english_module_name'] = $dataKeys[$i];
-
-      $results[$i]['english_module_' . $type] = $this->getModuleStats($query[$dataKeys[$i]], $model);
-
       $frenchCourse = $this->getFrenchCourse($dataKeys[$i]);
 
+      $results[$i]['english_module_name'] = $dataKeys[$i];
+
       $results[$i]['french_module_name'] = $frenchCourse;
+
+      $results[$i]['english_module_' . $type] = $this->getModuleStats($query[$dataKeys[$i]], $model);
 
       $results[$i]['french_module_' . $type] = $this->getFrenchModuleStats($query, $frenchCourse, $model);
 
@@ -114,9 +114,7 @@ class CometReport
   {
     $nonEnglishCourses = $this->getNonEnglishCourses($moduleName);
 
-    if (!$nonEnglishCourses) {
-      return null;
-    }
+    if (!$nonEnglishCourses) return null;
 
     if ($nonEnglishCourses->where('language_id', $this->FrenchLangId)->first() === null) {
       return null;
