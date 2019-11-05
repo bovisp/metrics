@@ -37,9 +37,6 @@ class CometScrapeController extends Controller
   {
     CometCourse::truncate();
 
-    DB::table('comet_course_languages')
-      ->truncate();    
-
     $crawler = $this->client
       ->request(
         'GET', 

@@ -199,8 +199,6 @@ class PersistCometFiles
     $nonMatchArray = [];
 
     foreach($data as $item) {
-      if ($item[11] === 'Spanish') continue;
-
       if ($this->hasCorrectedTitle($item[10])) {
         $item[10] = CometCourse::find($this->hasCorrectedTitle($item[10]))->title;
 
@@ -256,10 +254,6 @@ class PersistCometFiles
     $nonMatchArray = [];
 
     foreach($data as $item) {
-      if ($item[11] === 'Spanish') {
-        continue;
-      }
-      
       if ($this->hasCorrectedTitle($item[10])) {
         $item[10] = CometCourse::find($this->hasCorrectedTitle($item[10]))->title;
 
@@ -318,7 +312,7 @@ class PersistCometFiles
         return $course->title;
       } else if ($item[11] === 'English' && $percent >= 98) {
         return $course->title;
-      } else if ($item[11] === 'French' && $percent >= 93) {
+      } else if ($percent >= 93) {
         return $course->title;
       }
     }

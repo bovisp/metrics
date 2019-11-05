@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\CometCourse;
 use Illuminate\Database\Eloquent\Model;
 
 class CometCourse extends Model
@@ -20,6 +21,12 @@ class CometCourse extends Model
       'keywords',
       'language_id',
       'module_id',
-      'image_src'
+      'image_src',
+      'english_module_id'
     ];
+
+    public function nonEnglishCourses()
+    {
+      return $this->hasMany(CometCourse::class, 'english_module_id');
+    }
 }
