@@ -1,6 +1,8 @@
 <?php
 
 Route::get('/', 'ProcessCometStatsController@index');
+Route::get('/charts', 'ChartsController@index');
+Route::get('/api/charts', 'Api\ChartsController@index');
 
 Auth::routes();
 

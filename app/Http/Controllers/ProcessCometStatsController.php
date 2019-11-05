@@ -7,8 +7,8 @@ use App\Jobs\ProcessCometStats;
 
 class ProcessCometStatsController extends Controller
 {
-    public function index()
-    {
-      (new ProcessCometStats(Carbon::now()->submonths(48), Carbon::now()))->handle();
-    }
+  public function index()
+  {
+    return (new ProcessCometStats(Carbon::now()->submonths(48), Carbon::now(), true))->handle();
+  }
 }

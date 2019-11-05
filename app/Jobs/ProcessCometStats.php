@@ -23,16 +23,20 @@ class ProcessCometStats implements ShouldQueue
 
   protected $endDate;
 
+  protected $shouldMail;
+
   /**
    * Create a new job instance.
    *
    * @return void
    */
-  public function __construct(Carbon $startDate, Carbon $endDate)
+  public function __construct(Carbon $startDate, Carbon $endDate, $shouldMail)
   {
     $this->startDate = $startDate;
 
     $this->endDate = $endDate;
+
+    $this->shouldMail = $shouldMail;
   }
 
   /**
@@ -42,10 +46,21 @@ class ProcessCometStats implements ShouldQueue
    */
   public function handle()
   {
-    $filename = "comet_stats_{$this->startDate->format('Ymd')}_{$this->endDate->format('Ymd')}.xlsx";
-
     $stats = (new CometReport($this->startDate, $this->endDate))
       ->process();
+
+    if ($this->shouldMail) {
+      $this->mail($stats);
+
+      return;
+    }
+
+    return $stats;
+  }
+
+  protected function mail($stats)
+  {
+    $filename = "comet_stats_{$this->startDate->format('Ymd')}_{$this->endDate->format('Ymd')}.xlsx";
 
     Excel::store(new CometExport($stats), $filename);
 
