@@ -19,11 +19,11 @@ class CometReport
 
   protected $frenchLangId;
 
-  public function __construct($startDate, $endDate)
+  public function __construct(Carbon $startDate, Carbon $endDate)
   {
-    $this->startDate = new Carbon($startDate);
+    $this->startDate = $startDate;
 
-    $this->endDate = new Carbon($endDate);
+    $this->endDate = $endDate;
 
     $this->cometCourses = Cache::get('cometModules');
 
