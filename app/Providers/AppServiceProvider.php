@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\CometView;
 use App\CometCourse;
+use App\CometCompletion;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
@@ -30,5 +32,9 @@ class AppServiceProvider extends ServiceProvider
       Cache::forever('cometLanguages', DB::table('comet_languages')->get());
 
       Cache::forever('cometModules', CometCourse::with('nonEnglishCourses')->whereNull('english_module_id')->get());
+
+      Cache::forever('earliestCometViewDate', CometView::orderBy('date')->get()->first()->date);
+
+      Cache::forever('earliestCometCompletionDate', CometCompletion::orderBy('date_completed')->get()->first()->date_completed);
     }
 }
